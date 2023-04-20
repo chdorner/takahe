@@ -97,6 +97,13 @@
 
         {% block subcontent %}
 
+            {% for post in pinned_posts %}
+                <div class="pinned-post-banner">
+                    Pinned post
+                </div>
+                {% include "activities/_post.html" %}
+            {% endfor %}
+
             {% for post in page_obj %}
                 {% include "activities/_post.html" %}
             {% empty %}
