@@ -332,6 +332,8 @@ class Post(StatorModel):
         action_unboost = "{view}unboost/"
         action_bookmark = "{view}bookmark/"
         action_unbookmark = "{view}unbookmark/"
+        action_pin = "{view}pin/"
+        action_unpin = "{view}unpin/"
         action_delete = "{view}delete/"
         action_edit = "{view}edit/"
         action_report = "{view}report/"

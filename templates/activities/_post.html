@@ -94,6 +94,7 @@
                     <i class="fa-solid fa-flag"></i> Report
                 </a>
                 {% if post.author == request.identity %}
+                    {% include "activities/_pin.html" %}
                     <a href="{{ post.urls.action_edit }}" role="menuitem">
                         <i class="fa-solid fa-pen-to-square"></i> Edit
                     </a>

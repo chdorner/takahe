@@ -35,6 +35,7 @@ class Home(TemplateView):
             "bookmarks": Bookmark.for_identity(
                 self.request.identity, event_page, "subject_post_id"
             ),
+            "pins": self.request.identity.pinned,
             "current_page": "home",
             "allows_refresh": True,
             "page_obj": event_page,
@@ -75,6 +76,8 @@ class Tag(ListView):
         context["bookmarks"] = Bookmark.for_identity(
             self.request.identity, context["page_obj"]
         )
+        if self.request.identity:
+            context["pins"] = self.request.identity.pinned
         context["follow"] = HashtagFollow.maybe_get(
             self.request.identity,
             self.hashtag,
@@ -105,6 +108,8 @@ class Local(ListView):
         context["bookmarks"] = Bookmark.for_identity(
             self.request.identity, context["page_obj"]
         )
+        if self.request.identity:
+            context["pins"] = self.request.identity.pinned
         return context
 
 
@@ -129,6 +134,7 @@ class Federated(ListView):
         context["bookmarks"] = Bookmark.for_identity(
             self.request.identity, context["page_obj"]
         )
+        context["pins"] = self.request.identity.pinned
         return context
 
 
@@ -193,4 +199,5 @@ class Notifications(ListView):
         context["bookmarks"] = Bookmark.for_identity(
             self.request.identity, context["page_obj"], "subject_post_id"
         )
+        context["pins"] = self.request.identity.pinned
         return context

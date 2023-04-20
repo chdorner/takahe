@@ -1,5 +1,5 @@
 from django.core.exceptions import PermissionDenied
-from django.http import Http404, JsonResponse
+from django.http import Http404, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.decorators import method_decorator
 from django.views.decorators.vary import vary_on_headers
@@ -11,6 +11,7 @@ from core.decorators import cache_page_by_ap_json
 from core.ld import canonicalise
 from users.decorators import identity_required
 from users.models import Identity
+from users.services import IdentityService
 from users.shortcuts import by_handle_or_404
 
 
@@ -60,6 +61,7 @@ class Individual(TemplateView):
                     [self.post_obj] + ancestors + descendants,
                     self.request.identity,
                 ),
+                "pins": self.request.identity.pinned,
                 "link_original": True,
                 "ancestors": ancestors,
                 "descendants": descendants,
@@ -174,6 +176,43 @@ class Bookmark(View):
                 {
                     "post": post,
                     "bookmarks": set() if self.undo else {post.pk},
+                },
+            )
+        return redirect(post.urls.view)
+
+
+@method_decorator(identity_required, name="dispatch")
+class Pin(View):
+    """
+    Adds/removes a post pin.
+    """
+
+    undo = False
+
+    def post(self, request, handle, post_id):
+        identity = by_handle_or_404(self.request, handle, local=False)
+        post = get_object_or_404(
+            PostService.queryset()
+            .filter(author=identity)
+            .visible_to(request.identity, include_replies=True),
+            pk=post_id,
+        )
+        try:
+            if self.undo:
+                IdentityService(identity).unpin_post(post)
+            else:
+                IdentityService(identity).pin_post(post)
+        except ValueError as e:
+            # TODO: ideally this is handled with some sort of "flash message" system
+            #       and shown to the user.
+            return HttpResponseBadRequest(str(e))
+        if request.htmx:
+            return render(
+                request,
+                "activities/_pin.html",
+                {
+                    "post": post,
+                    "pins": set() if self.undo else {post.object_uri},
                 },
             )
         return redirect(post.urls.view)

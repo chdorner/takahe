@@ -75,6 +75,7 @@ class ViewIdentity(ListView):
             self.request.identity,
         )
         context["post_count"] = self.identity.posts.count()
+        context["pins"] = self.identity.pinned
         if self.identity.config_identity.visible_follows:
             context["followers_count"] = self.identity.inbound_follows.filter(
                 state__in=FollowStates.group_active()

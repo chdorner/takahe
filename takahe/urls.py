@@ -257,6 +257,8 @@ urlpatterns = [
     path(
         "@<handle>/posts/<int:post_id>/unbookmark/", posts.Bookmark.as_view(undo=True)
     ),
+    path("@<handle>/posts/<int:post_id>/pin/", posts.Pin.as_view()),
+    path("@<handle>/posts/<int:post_id>/unpin/", posts.Pin.as_view(undo=True)),
     path("@<handle>/posts/<int:post_id>/delete/", posts.Delete.as_view()),
     path("@<handle>/posts/<int:post_id>/report/", report.SubmitReport.as_view()),
     path("@<handle>/posts/<int:post_id>/edit/", compose.Compose.as_view()),

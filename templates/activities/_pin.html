@@ -1,0 +1,9 @@
+{% if post.object_uri in pins %}
+    <a hx-post="{{ post.urls.action_unpin }}" hx-swap="outerHTML" role="menuitem">
+        <i class="fa-solid fa-thumbtack"></i> Unpin from profile
+    </a>
+{% else %}
+    <a hx-post="{{ post.urls.action_pin }}" hx-swap="outerHTML" role="menuitem">
+        <i class="fa-solid fa-thumbtack"></i> Pin to profile
+    </a>
+{% endif %}
