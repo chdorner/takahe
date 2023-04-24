@@ -11,7 +11,6 @@ from core.decorators import cache_page_by_ap_json
 from core.ld import canonicalise
 from users.decorators import identity_required
 from users.models import Identity
-from users.services import IdentityService
 from users.shortcuts import by_handle_or_404
 
 
@@ -61,7 +60,6 @@ class Individual(TemplateView):
                     [self.post_obj] + ancestors + descendants,
                     self.request.identity,
                 ),
-                "pins": self.request.identity.pinned,
                 "link_original": True,
                 "ancestors": ancestors,
                 "descendants": descendants,
@@ -199,9 +197,9 @@ class Pin(View):
         )
         try:
             if self.undo:
-                IdentityService(identity).unpin_post(post)
+                PostService(post).unpin_as(identity)
             else:
-                IdentityService(identity).pin_post(post)
+                PostService(post).pin_as(identity)
         except ValueError as e:
             # TODO: ideally this is handled with some sort of "flash message" system
             #       and shown to the user.
@@ -212,7 +210,7 @@ class Pin(View):
                 "activities/_pin.html",
                 {
                     "post": post,
-                    "pins": set() if self.undo else {post.object_uri},
+                    "interactions": {"pin": set() if self.undo else {post.pk}},
                 },
             )
         return redirect(post.urls.view)
