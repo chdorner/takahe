@@ -176,6 +176,7 @@ def remote_identity() -> Identity:
         actor_uri="https://remote.test/test-actor/",
         inbox_uri="https://remote.test/@test/inbox/",
         profile_uri="https://remote.test/@test/",
+        featured_collection_uri="https://remote.test/test-actor/collections/featured/",
         username="test",
         domain=domain,
         name="Test Remote User",
